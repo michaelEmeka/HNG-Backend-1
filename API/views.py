@@ -56,19 +56,22 @@ def get_properties(num):
 
 
 async def home(request, *args, **kwargs):
-    #print(request.GET["number"])
+    
+    if request.method == "GET":
+        number = request.GET["number"]
 
-    # print(kwargs["number"])
-    number = request.GET["number"]
-    response_data = requests.get(f"http://numbersapi.com/{number}/math")
+        if not f"{number}".isdigit():
+            return JsonResponse({"number": "alphabet", "error": "true"}, status=400)
 
-    json_data = {
-        "number": number,
-        "is_prime": is_prime(int(number)),
-        "is_perfect": is_perfect(int(number)),
-        "properties": get_properties(int(number)),
-        "digit_sum": digit_sum,
-        "fun_fact": response_data.text,
-    }
-    print(response_data.text)
-    return JsonResponse(json_data)
+        response_data = requests.get(f"http://numbersapi.com/{number}/math")
+
+        json_data = {
+            "number": number,
+            "is_prime": is_prime(int(number)),
+            "is_perfect": is_perfect(int(number)),
+            "properties": get_properties(int(number)),
+            "digit_sum": digit_sum,
+            "fun_fact": response_data.text,
+        }
+        return JsonResponse(json_data, status=200)
+    
