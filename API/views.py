@@ -71,7 +71,7 @@ async def home(request, *args, **kwargs):
             "is_prime": is_prime(int(number)),
             "is_perfect": is_perfect(int(number)),
             "properties": get_properties(int(number)),
-            "digit_sum": digit_sum,
+            "digit_sum": int(digit_sum),
             "fun_fact": response_data.text,
         }
         return JsonResponse(json_data, status=200)
