@@ -35,7 +35,7 @@ def get_properties(num):
 
     # is armstrong
     while nc >= 10:
-        temp = num % 10
+        temp = nc % 10
         num_digits.append(temp)
         nc -= temp
         nc /= 10
@@ -43,6 +43,7 @@ def get_properties(num):
 
     for n in num_digits:
         arm_val += n**3
+        print(n)
         digit_sum += n
 
     if arm_val == num:
