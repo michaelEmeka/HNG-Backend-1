@@ -66,7 +66,7 @@ async def home(request, *args, **kwargs):
         number = request.GET["number"]
 
         if not f"{number}".isdigit():
-            return JsonResponse({"error": "true", "number": f"{number}"}, status=400)
+            return JsonResponse({"error": True, "number": f"{number}"}, status=400)
 
         response_data = requests.get(f"http://numbersapi.com/{number}/math")
 
