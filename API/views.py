@@ -42,7 +42,7 @@ def get_properties(num):
     num_digits.append(nc)
 
     for n in num_digits:
-        arm_val += n**3
+        arm_val += n**len(num_digits)
         print(n)
         digit_sum += n
 
@@ -62,14 +62,14 @@ async def home(request, *args, **kwargs):
         number = request.GET["number"]
 
         if not f"{number}".isdigit():
-            return JsonResponse({"number": "alphabet", "error": "true"}, status=400)
+            return JsonResponse({"error": "true", "number": f"{number}"}, status=400)
 
         response_data = requests.get(f"http://numbersapi.com/{number}/math")
 
         json_data = {
-            "number": number,
-            "is_prime": is_prime(int(number)),
-            "is_perfect": is_perfect(int(number)),
+            "number": int(number),
+            "is_prime": bool(is_prime(int(number))),
+            "is_perfect": bool(is_perfect(int(number))),
             "properties": get_properties(int(number)),
             "digit_sum": int(digit_sum),
             "fun_fact": response_data.text,
