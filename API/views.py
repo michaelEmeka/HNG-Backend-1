@@ -20,8 +20,8 @@ def is_perfect(num):
         if num % i == 0:
             temp += i
             
-    print(temp)
-    print(num)
+    #print(temp)
+    #print(num)
     if temp == num:
         print("equal")
         return True
@@ -30,14 +30,19 @@ def is_perfect(num):
 
 def get_properties(num):
     global digit_sum
-    nc = num
     properties = []
     num_digits = []
     arm_val = 0
+    is_negative = False
 
     digit_sum = 0
 
+    if num < 0:
+        num *= -1
+        is_negative = True
+    
     # is armstrong
+    nc = num
     while nc >= 10:
         temp = nc % 10
         num_digits.append(temp)
@@ -47,35 +52,42 @@ def get_properties(num):
 
     for n in num_digits:
         arm_val += n**len(num_digits)
-        #print(n)
         digit_sum += n
 
-    if arm_val == num:
+    if arm_val == num and not is_negative:
         properties.append("armstrong")
     if num % 2 == 0:
         properties.append("even")
     else:
         properties.append("odd")
-
     return properties
 
 
 async def home(request, *args, **kwargs):
-    
+
     if request.method == "GET":
         number = request.GET["number"]
 
-        if not f"{number}".isdigit():
-            return JsonResponse({"error": True, "number": f"{number}"}, status=400)
+        try:
+            #print(type(number))
+            number = int(number)
+            response_data = requests.get(f"http://numbersapi.com/{number}/math")
+            
+            #print(response_data.text)
+            json_data = {
+                "number": number,
+                "is_prime": is_prime(number),
+                "is_perfect": is_perfect(number),
+                "properties": get_properties(number),
+                "digit_sum": int(digit_sum),
+                "fun_fact": response_data.text,
+                }
+            return JsonResponse(json_data, status=200)
 
-        response_data = requests.get(f"http://numbersapi.com/{number}/math")
-
-        json_data = {
-            "number": int(number),
-            "is_prime": is_prime(int(number)),
-            "is_perfect": is_perfect(int(number)),
-            "properties": get_properties(int(number)),
-            "digit_sum": int(digit_sum),
-            "fun_fact": response_data.text,
-        }
-        return JsonResponse(json_data, status=200)
+        except Exception as e:
+            print(e)
+            json_data = {
+                "error": True,
+                "number": number
+                }
+            return JsonResponse(json_data, status=400)
